@@ -1,0 +1,6 @@
+resources:
+- ../../base
+
+images:
+- name: auth
+  newTag: v1.0.0
