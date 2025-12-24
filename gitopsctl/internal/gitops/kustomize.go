@@ -3,58 +3,61 @@ package gitops
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
-	
 )
 
-type Kustomization struct {
-	APIVersion string `yaml:"apiVersion"`
-	Kind string `yaml:"kind"`
-	Resources []string `yaml:"resources,omitempty"`
-	Images []Image `yaml:"images,omitempty"`
+// UpdateImageTagInFile updates only the newTag of the image in the kustomization.yaml
+func UpdateImageTagInFile(path, image string, dryRun bool) ([]byte, error) {
+	parts := strings.Split(image, ":")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid image format, expected name:tag")
+	}
+	imageName := parts[0]
+	imageTag := parts[1]
 
-}
-
-type Image struct {
-	Name string `yaml:"name"`
-	NewTag string `yaml:"newTag,omitempty"`
-}
-
-func LoadKustomization(path string) (*Kustomization, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	var k Kustomization
-	if err := yaml.Unmarshal(data, &k); err != nil {
+	var obj map[string]interface{}
+	if err := yaml.Unmarshal(data, &obj); err != nil {
 		return nil, err
 	}
 
-	return &k, nil
-}
+	imagesRaw, ok := obj["images"]
+	if !ok {
+		return nil, fmt.Errorf("no images section found in %s", path)
+	}
 
-func UpdateImageTag(k *Kustomization, app string, newTag string) error {
-	for i, img := range k.Images {
-		if img.Name == app {
-			k.Images[i].NewTag = newTag
-			return nil
+	images := imagesRaw.([]interface{})
+	found := false
+
+	for _, img := range images {
+		m := img.(map[string]interface{})
+		if m["name"] == imageName {
+			m["newTag"] = imageTag
+			found = true
+			break
 		}
 	}
 
-	return fmt.Errorf("image %s not found in kustomization", app)
-}
-
-func SaveKustomization(path string, k *Kustomization) error {
-	data, err := yaml.Marshal(k)
-	if err != nil {
-		return err
+	if !found {
+		return nil, fmt.Errorf("image %s not found in %s", imageName, path)
 	}
 
-	return os.WriteFile(path, data, 0644)
-}
+	out, err := yaml.Marshal(obj)
+	if err != nil {
+		return nil, err
+	}
 
-func RenderYAML(k *Kustomization) ([]byte, error) {
-	return yaml.Marshal(k)
+	if !dryRun {
+		if err := os.WriteFile(path, out, 0644); err != nil {
+			return nil, err
+		}
+	}
+
+	return out, nil
 }

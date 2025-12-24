@@ -1,6 +1,7 @@
+apiVersion: ""
+kind: ""
 resources:
-- ../../base
-
+    - ../../base
 images:
-- name: auth
-  newTag: v1.0.0
+    - name: auth
+      newTag: auth:v1.1.0
