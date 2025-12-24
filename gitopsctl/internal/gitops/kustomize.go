@@ -10,12 +10,16 @@ import (
 
 // UpdateImageTagInFile updates only the newTag of the image in the kustomization.yaml
 func UpdateImageTagInFile(path, image string, dryRun bool) ([]byte, error) {
+	
 	parts := strings.Split(image, ":")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid image format, expected name:tag")
 	}
 	imageName := parts[0]
 	imageTag := parts[1]
+
+	fmt.Println("DEBUG: imageName =", imageName)
+    fmt.Println("DEBUG: imageTag  =", imageTag)
 
 	data, err := os.ReadFile(path)
 	if err != nil {

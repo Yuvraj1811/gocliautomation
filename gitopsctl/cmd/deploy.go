@@ -29,11 +29,19 @@ var deployCmd = &cobra.Command{
 			return err
 		}
 
+		 fmt.Println("DEBUG: CLI input image =", image)
+		 fmt.Println("DEBUG: CLI input env   =", env)
+		 fmt.Println("DEBUG: CLI input app   =", app)
+         
+		
 		// Locate overlay kustomization.yaml
 		path := filepath.Join("apps", app, "overlays", env, "kustomization.yaml")
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			return fmt.Errorf("file not found: %s", path)
 		}
+
+		fmt.Println("DEBUG: kustomization path =", path)
+
 
 		// Update image in YAML (map-based)
 		updatedData, err := gitops.UpdateImageTagInFile(path, image, dryRun)
@@ -56,7 +64,7 @@ var deployCmd = &cobra.Command{
 		fmt.Println("YAML updated successfully")
 
 		// Git automation
-		repo, err := gitops.OpenRepo(".")
+		repo, err := gitops.OpenRepo(".") 
 		if err != nil {
 			return err
 		}
