@@ -4,4 +4,4 @@ resources:
     - ../../base
 images:
     - name: billing
-      newTag: v1.0.0
+      newTag: v1.0.2
