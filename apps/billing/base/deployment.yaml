@@ -16,4 +16,4 @@ spec:
         - name: billing
           image: billing-service:1.0
           ports:
-            - containerPort: 3000
+            - containerPort: 3008
