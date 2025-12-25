@@ -1,19 +1,19 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth
+  name: notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: notification
   template:
     metadata:
       labels:
-        app: auth
+        app: notification
     spec:
       containers:
-        - name: auth
-          image: auth-service:1.0
+        - name: notification
+          image: notification-service:1.0
           ports:
             - containerPort: 3000

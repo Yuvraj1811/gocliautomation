@@ -1,19 +1,19 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth
+  name: gateway
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: gateway
   template:
     metadata:
       labels:
-        app: auth
+        app: gateway
     spec:
       containers:
-        - name: auth
-          image: auth-service:1.0
+        - name: gateway
+          image: gateway-service:1.0
           ports:
             - containerPort: 3000

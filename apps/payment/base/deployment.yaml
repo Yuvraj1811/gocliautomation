@@ -1,19 +1,19 @@
 ﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth
+  name: payment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: payment
   template:
     metadata:
       labels:
-        app: auth
+        app: payment
     spec:
       containers:
-        - name: auth
-          image: auth-service:1.0
+        - name: payment
+          image: payment-service:1.0
           ports:
             - containerPort: 3000

@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - ../../base
 images:
-  - name: auth
+  - name: shipping
     newTag: v1.3.5
